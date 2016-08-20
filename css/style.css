@@ -148,6 +148,11 @@ h1 {
 /**==================
  Player style
 */
-#player1:hover, #player2:hover{
+#player1:hover, #player2:hover,
+{
   cursor: pointer;
 }
+
+/***==================
+  Box X and O svg images
+*/
