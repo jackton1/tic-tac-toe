@@ -149,12 +149,11 @@ $(document).ready(function() {
         board.startWith(o, x);
         updateGame(board, reporter);
     });
-    $('.space').hover(function() {
+    $(".space").hover(function() {
         board.registerHumanHover($(this).children('i'));
     }, function() {
         board.clearHumanHover($(this).children('i'));
-    });
-    $('.space').click(function() {
+    }).click(function() {
         if (board.registerHumanClick($(this).children('i'))) {
             updateGame(board, reporter);
         }
