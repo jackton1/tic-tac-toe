@@ -4,70 +4,106 @@
  and the start.txt HTML snippet to guide you.
  */
 
-var playerName;
+
+var gameModule;
+gameModule = (function (exports) {
+    var exports = {
+        playerName: ""
+    };
+
+    //Check of the player name has a value
+    exports.checkName = function () {
+        $('#player-name').bind("blur" , function () {
+
+            exports.playerName = $(this).val();
+            //Display a red box indicating empty field
+            if ( exports.playerName === "" ) {
+                $(this).css("border" , "2px solid red");
+
+            } else {
+                //Green box indicating field not empty
+                $(this).css("border" , "2px solid green");
+                exports.startGame();
+            }
+
+        });
+    };
+
+    exports.load_start = function () {
+        var $div;
+        $('#board').css("display" , "none");
+        $('#finish').css("display" , "none");
+        $div = $("<div>").attr({
+            class: "screen screen-start" ,
+            id: "start"
+        });
+        var $header = $("<header>");
+        $header.append("<h2>Enter Player Name:</h2><input type='text' id='player-name'>")
+        $header.append("<h1>Tic Tac Toe</h1>");
+        $header.append('<a href="#" class="button">Start game</a>');
+        $div.append($header);
+        $("body").append($div);
+    };
+
+    exports.startGame = function () {
+        $('#start').find('.button').on("click" , function () {
+            //Hide the start page
+            $('#start').css("display" , "none");
+            //Start with the first player
+            $('#player1').addClass("active");
+            //Show the board
+            $("#board").css("display" , "block");
+            //Show a welcome message with the players name
+            $("#board").find("header").append("<h3 id='welcome' style = 'text-align:center'>Welcome to the game " + exports.playerName + "</h3>")
+            $("#welcome").fadeOut(5000 , function () {
+            });
+        });
+    };
+
+    exports.play = function(){
+      //
 
 
-var startGame = function (element) {
-    //Hide the start page
-    $(element).css("display" , "none");
-    //Start with the first player
-    $('#player1').addClass("active");
-    //Show the board
-    $("#board").css("display" , "block");
-    //Show a welcome message with the players name
-    $("#board").find("header").append("<h3 id='welcome' style = 'text-align:center'>Welcome to the game " + playerName + "</h3>")
-    $( "#welcome" ).fadeOut( 5000, function() {
-    });
-};
 
+    };
+
+    exports.win = function () {
+        var $windiv;
+        $('#board').css("display" , "none");
+        $windiv = $("<div>").attr({
+            class: "screen screen-win screen-win-tie" ,
+            id: "finish"
+        });
+        var $header = $("<header>");
+        $header.append("<h1>Tic Tac Toe</h1>");
+        $header.append('<p class="message">' + exports.playerName + 'WINS</p>');
+        $header.append('<a href="#" class="button">New game</a>');
+        $windiv.append($header);
+        $("body").append($windiv);
+        $("#finish").find(".button").click(function () {
+            window.location.href = window.location.pathname;
+        });
+    };
+
+    return exports
+
+}(gameModule || {}));
 
 $(function(){
     //Load the Start page on load
-   load_start;
+   gameModule.load_start();
     //Focus on the player name input
     $('#player-name').focus();
+    //Play the game
+    gameModule.checkName();
 
-    //Check of the player name has a value
-    $('#player-name').on("blur", function(){
-        playerName =  $(this).val();
-        //Display a red box indicating empty field
-        if ( playerName === "" ) {
-            $(this).css("border", "2px solid red");
-
-        } else {
-            //Green box indicating field not empty
-            $(this).css("border", "2px solid green");
-            $('#start').find('.button').on("click" , startGame('#start'));
-        }
-
-    });
 });
 
-
-
-//Load start page
-var load_start;
-load_start = (function () {
-    var $div;
-    $('#board').css("display", "none");
-    $('#finish').css("display","none")
-    $div = $("<div>").attr({
-        class: "screen screen-start",
-        id: "start"
-    });
-    var $header = $("<header>");
-    $header.append("<h2>Enter Player Name:</h2><input type='text' id='player-name'>")
-    $header.append("<h1>Tic Tac Toe</h1>");
-    $header.append('<a href="#" class="button">Start game</a>');
-    $div.append($header);
-    $("body").append($div);
-
-})();
 
 //Event to each player selected
 $('.players').on("click", function(){
     //Remove active class from players x and o
-  $('.players').removeClass("active");
+  $('.players').removeClass('active');
     //Add an active class to the current selected player
   $(this).toggleClass("active");
 });
@@ -110,25 +146,9 @@ $('.box').click(function(){
     }
 });
 
-setTimeout(win , 10000);
-
-function win() {
-    var $windiv;
-    $('#board').css("display" , "none");
-    $windiv = $("<div>").attr({
-        class: "screen screen-win-one" ,
-        id: "finish"
-    });
-    var $header = $("<header>");
-    $header.append("<h1>Tic Tac Toe</h1>");
-    $header.append('<p class="message">' + playerName + ' WINS</p>')
-    $header.append('<a href="#" class="button">New game</a>');
-    $windiv.append($header);
-    $("body").append($windiv);
-    $("#finish").find(".button").click(function(){
-        window.location.href = window.location.pathname;
-    });
-}
+setTimeout(function () {
+    gameModule.win();
+} , 10000);
 
 
 //When the user Presses the Back button restarts the game
@@ -137,8 +157,3 @@ window.onhashchange= function(e){
     window.location.href = e.newURL;
   }
 };
-
-//When the window if resized reload the start page
-$(window).resize(function(){
-  load_start;
-});
