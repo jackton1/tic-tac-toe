@@ -7,8 +7,10 @@
 
 var gameModule;
 gameModule = (function (exports) {
-    var exports = {
-        playerName: ""
+    exports = {
+        playerName: "" ,
+        player1: [] ,
+        player2: []
     };
 
     //Check of the player name has a value
@@ -38,7 +40,7 @@ gameModule = (function (exports) {
             id: "start"
         });
         var $header = $("<header>");
-        $header.append("<h2>Enter Player Name:</h2><input type='text' id='player-name'>")
+        $header.append("<h2>Enter Player Name:</h2><input type='text' id='player-name'>");
         $header.append("<h1>Tic Tac Toe</h1>");
         $header.append('<a href="#" class="button">Start game</a>');
         $div.append($header);
@@ -60,18 +62,67 @@ gameModule = (function (exports) {
         });
     };
 
-    exports.play = function(){
+    exports.play = function(selection){
       //
-
-
-
+        $(".box").each( function () {
+            //Get the index of the players selection and the computer selection
+            if ($(this).hasClass(selection) && selection == 'box-filled-2'){
+                var indexOfPlayer = $(this).index();
+                exports.player2.push(indexOfPlayer);
+                jQuery.unique(exports.player2);
+                var winPattern1 = [2,4,6];
+                var winPattern2 = [0,1,2];
+                var winPattern3 = [0,3,6];
+                var winPattern4 = [6,7,8];
+                checkWinner(winPattern1);
+                checkWinner(winPattern2);
+                checkWinner(winPattern3);
+                checkWinner(winPattern4);
+            }
+            if ($(this).hasClass(selection) && selection == 'box-filled-1'){
+                exports.player1.push($(this).index());
+            }
+        });
     };
 
-    exports.win = function () {
+    var checkWinner = function (pattern) {
+        var ret =0;
+        $.each( pattern, function (index , value){
+            if ($.inArray(value,exports.player2) != -1){
+                ret += 1;
+            }
+            else{
+                ret = 0
+            }
+            if(ret == 3){
+                exports.win('two');
+            }
+        });
+    };
+
+    exports.changePlayer =  function () {
+      //Switch to the next player
+        $( ".players" ).each(function() {
+            if ( !$(this).hasClass("active") ) {
+                $(this).addClass("active");
+            } else {
+                $(this).removeClass("active");
+            }
+        });
+    };
+
+    exports.removeActive = function () {
+        //Remove active class from players x and o
+        $( ".players" ).each(function() {
+            $( this ).removeClass( "active" );
+        });
+    };
+
+    exports.win = function (value) {
         var $windiv;
         $('#board').css("display" , "none");
         $windiv = $("<div>").attr({
-            class: "screen screen-win screen-win-tie" ,
+            class: "screen screen-win screen-win-"+value,
             id: "finish"
         });
         var $header = $("<header>");
@@ -102,8 +153,7 @@ $(function(){
 
 //Event to each player selected
 $('.players').on("click", function(){
-    //Remove active class from players x and o
-  $('.players').removeClass('active');
+   gameModule.removeActive();
     //Add an active class to the current selected player
   $(this).toggleClass("active");
 });
@@ -128,7 +178,10 @@ $('.box').click(function(){
         $(this).addClass(selection);
         //Remove the appended image
         $(this).children().remove();
+        //Switch to the the next player
+        gameModule.changePlayer();
     }
+     gameModule.play(selection);
 }).hover(function(){
     //Show the image of the selected
 
@@ -146,9 +199,38 @@ $('.box').click(function(){
     }
 });
 
-setTimeout(function () {
-    gameModule.win();
-} , 10000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //When the user Presses the Back button restarts the game
