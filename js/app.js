@@ -6,10 +6,11 @@
 
 
 var gameModule;
+
 gameModule = (function (exports) {
     exports = {
-        playerName: "" ,
-        player1: [] ,
+        playerName: "",
+        player1: [],
         player2: []
     };
 
@@ -53,10 +54,8 @@ gameModule = (function (exports) {
             $('#start').css("display" , "none");
             //Start with the first player
             $('#player1').addClass("active");
-            //Show the board
-            $("#board").css("display" , "block");
-            //Show a welcome message with the players name
-            $("#board").find("header").append("<h3 id='welcome' style = 'text-align:center'>Welcome to the game " + exports.playerName + "</h3>")
+            //Show the board  //Show a welcome message with the players name
+            $("#board").css("display" , "block").find("header").append("<h3 id='welcome' style = 'text-align:center'>Welcome to the game " + exports.playerName + "</h3>");
             $("#welcome").fadeOut(5000 , function () {
             });
         });
@@ -104,9 +103,10 @@ gameModule = (function (exports) {
       //Switch to the next player
         $( ".players" ).each(function() {
             if ( !$(this).hasClass("active") ) {
-                $(this).addClass("active");
+                $(this).addClass("active").addClass("players-turn");
             } else {
-                $(this).removeClass("active");
+                $(this).removeClass("active").removeClass("players-turn");
+
             }
         });
     };
@@ -114,7 +114,7 @@ gameModule = (function (exports) {
     exports.removeActive = function () {
         //Remove active class from players x and o
         $( ".players" ).each(function() {
-            $( this ).removeClass( "active" );
+            $( this ).removeClass( "active" ).removeClass("players-turn");
         });
     };
 
@@ -127,7 +127,7 @@ gameModule = (function (exports) {
         });
         var $header = $("<header>");
         $header.append("<h1>Tic Tac Toe</h1>");
-        $header.append('<p class="message">' + exports.playerName + 'WINS</p>');
+        $header.append('<p class="message">' + exports.playerName + ' WINS</p>');
         $header.append('<a href="#" class="button">New game</a>');
         $windiv.append($header);
         $("body").append($windiv);
@@ -150,12 +150,12 @@ $(function(){
 
 });
 
-
+//
 //Event to each player selected
 $('.players').on("click", function(){
    gameModule.removeActive();
     //Add an active class to the current selected player
-  $(this).toggleClass("active");
+  $(this).addClass("active").addClass("players-turn");
 });
 
 
