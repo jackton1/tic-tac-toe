@@ -9,9 +9,24 @@ var gameModule;
 
 gameModule = (function (exports) {
     exports = {
+        //Store the player Name
         playerName: "",
+        //Store the Name of the Computer Player
+        computerName: "Computer",
+        //Store the loaction of the player 1
         player1: [],
-        player2: []
+        //Store the location of the Player 2
+        player2: [],
+        //Store all possible win pattern indexes on the board
+        winPattern: [ [0,1,2],  //Horizontal Win Patterns
+                     [3,4,5],  
+                     [6,7,8],
+                     [0,3,6],  //Vertical Win Patterns
+                     [1,4,7],
+                     [2,5,8],
+                     [0,4,8],  //Diagonal
+                     [2,4,6]
+                    ]
     };
 
     //Check of the player name has a value
@@ -32,22 +47,29 @@ gameModule = (function (exports) {
         });
     };
 
+    //Function to load the start page on load of the document
     exports.load_start = function () {
         var $div;
+        //Hide the board 
         $('#board').css("display" , "none");
+        //Hide the finish page if navigating from finish to start
         $('#finish').css("display" , "none");
+        //Add the attributes to the start page div
         $div = $("<div>").attr({
             class: "screen screen-start" ,
             id: "start"
         });
+        //Append the player Name and Start game link to the header
         var $header = $("<header>");
         $header.append("<h2>Enter Player Name:</h2><input type='text' id='player-name'>");
         $header.append("<h1>Tic Tac Toe</h1>");
         $header.append('<a href="#" class="button">Start game</a>');
         $div.append($header);
+        //Append the header to the body of the page
         $("body").append($div);
     };
 
+    //Function to display the board on click of the start button
     exports.startGame = function () {
         $('#start').find('.button').on("click" , function () {
             //Hide the start page
@@ -55,49 +77,57 @@ gameModule = (function (exports) {
             //Start with the first player
             $('#player1').addClass("active");
             //Show the board  //Show a welcome message with the players name
-            $("#board").css("display" , "block").find("header").append("<h3 id='welcome' style = 'text-align:center'>Welcome to the game " + exports.playerName + "</h3>");
+            $("#board").css("display" , "block").find("header").append("<h3 id='welcome' style ='text-align:center'>Welcome to the game " + exports.playerName + "</h3>");
+            //Hide the Welcome message after 5 seconds
             $("#welcome").fadeOut(5000 , function () {
             });
         });
     };
-
-    exports.play = function(selection){
-      //
-        $(".box").each( function () {
-            //Get the index of the players selection and the computer selection
-            if ($(this).hasClass(selection) && selection == 'box-filled-2'){
-                var indexOfPlayer = $(this).index();
-                exports.player2.push(indexOfPlayer);
-                jQuery.unique(exports.player2);
-                var winPattern1 = [2,4,6];
-                var winPattern2 = [0,1,2];
-                var winPattern3 = [0,3,6];
-                var winPattern4 = [6,7,8];
-                checkWinner(winPattern1);
-                checkWinner(winPattern2);
-                checkWinner(winPattern3);
-                checkWinner(winPattern4);
-            }
+    //function to check the player move and call the checkWinner each move greater than 2
+    exports.play = function (selection) {
+        var board_o = $('.box.box-filled-1').length;
+        var board_x = $('.box.box-filled-2').length;
+         $(".box").each( function () {
+            console.log(this.index);
+             var indexOfPlayer = $(this).index();
+            //Get the index of both players selection 
             if ($(this).hasClass(selection) && selection == 'box-filled-1'){
-                exports.player1.push($(this).index());
-            }
+                 //Check if the value exist in the array before pushing the value
+                if (jQuery.inArray(indexOfPlayer , exports.player1 ) == -1){
+                    //If it doesn't exist push the value to the array
+                    exports.player1.push(indexOfPlayer);
+                }
+            };
+            if ($(this).hasClass(selection) && selection == 'box-filled-2'){
+
+                if (jQuery.inArray(indexOfPlayer , exports.player2 ) == -1){
+                    exports.player2.push(indexOfPlayer);
+                }
+            };
+
         });
+        //Check if o is the winner
+        if(board_o >= 3){
+              exports.checkWinner(exports.player1);
+        } 
+        //Check if x is the winner
+        if(board_x >= 3){
+            exports.checkWinner(exports.player2);
+        }          
     };
 
-    var checkWinner = function (pattern) {
-        var ret =0;
-        $.each( pattern, function (index , value){
-            if ($.inArray(value,exports.player2) != -1){
-                ret += 1;
-            }
-            else{
-                ret = 0
-            }
-            if(ret == 3){
-                exports.win('two');
-            }
-        });
+    exports.checkWinner = function(player){
+        var win = 0;
+        var value;
+        for(var i = 0; i < exports.winPattern.length;){
+                if(player === exports.winPattern[i]){
+                    win += 1;
+                    console.log(win + '' + player);
+                }
+            i++;
+         }
     };
+
 
     exports.changePlayer =  function () {
       //Switch to the next player
@@ -122,18 +152,19 @@ gameModule = (function (exports) {
         var $windiv;
         $('#board').css("display" , "none");
         $windiv = $("<div>").attr({
-            class: "screen screen-win screen-win-"+value,
+            class: "screen screen-win screen-win-"+ value,
             id: "finish"
         });
         var $header = $("<header>");
         $header.append("<h1>Tic Tac Toe</h1>");
         $header.append('<p class="message">' + exports.playerName + ' WINS</p>');
-        $header.append('<a href="#" class="button">New game</a>');
+        $header.append('<a href="#" class="button" onclick= gameModule.restart()>New game</a>');
         $windiv.append($header);
         $("body").append($windiv);
-        $("#finish").find(".button").click(function () {
+    };
+
+    exports.restart = function () {
             window.location.href = window.location.pathname;
-        });
     };
 
     return exports
@@ -198,36 +229,6 @@ $('.box').click(function(){
         }
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
