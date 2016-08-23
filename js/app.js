@@ -89,6 +89,8 @@ gameModule = function (exports) {
     exports.play = function (selection) {
         var board_o = $('.box.box-filled-1').length;
         var board_x = $('.box.box-filled-2').length;
+        var value = 0; 
+        for(var i = 0; i < 9; i++){ value += $('ul.boxes').children()[i].classList.length}
         $(".box").each(function () {
             var indexOfPlayer = $(this).index();
             //Get the index of both players selection
@@ -106,6 +108,7 @@ gameModule = function (exports) {
                 }
             }
         });
+
         //Check if o is the winner
         if(board_o >= 3 || board_x >= 3){
            var playerWin =  exports.checkWinner(exports.player1,exports.player2);
@@ -116,7 +119,7 @@ gameModule = function (exports) {
         if (playerWin == 2){
             exports.win('two');
         }
-        if(board_x >= 4 && board_o >= 4 && playerWin != 1 && playerWin != 2){
+        if(board_x >= 4 && board_o >= 4 && value > 17 &&playerWin != 1 && playerWin != 2){
             exports.win('tie');
         }     
 
@@ -131,9 +134,21 @@ gameModule = function (exports) {
 
         $.each(exports.winPattern, function(index, array){
             winner1 = array.length == player1.length && array.every(function(v,i) { 
-                                return ($.inArray(v,player1) != -1)});
+                                return ($.inArray(v,player1) != -1)
+                            });
             winner2 = array.length == player2.length && array.every(function(v,i) { 
                                 return ($.inArray(v,player2) != -1)});
+            if(player1.length > 4){
+                //Implement a check of 
+                winner1 = array.every(function(v,i) { 
+                                return ($.inArray(v,player1) != -1)
+                        });
+            }
+            if(player2.length > 4){
+                winner2 = array.every(function(v,i) { 
+                                return ($.inArray(v,player2) != -1)
+                            });
+            }
             if(winner1){
                 return false;
             };
@@ -224,7 +239,6 @@ $('.players').on("click", function(){
     //Add an active class to the current selected player
   $(this).addClass("active").addClass("players-turn");
 });
-
 
 //Store the classes of both x and o
 //When the user selects x or o and clicks the boxes
