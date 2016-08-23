@@ -15,7 +15,20 @@ gameModule = function (exports) {
         //Store the loaction of the player 1
         player1: [] ,
         //Store the location of the Player 2
-        player2: []
+        player2: [] ,
+
+        //Store all possible win pattern indexes on the board
+        winPattern: [ 
+                     [0,1,2],  //Horizontal Win Patterns
+                     [3,4,5],  
+                     [6,7,8],
+                     [0,3,6],  //Vertical Win Patterns
+                     [1,4,7],
+                     [2,5,8],
+                     [0,4,8],  //Diagonal
+                     [2,4,6]
+                    ]
+
     };
 
     //Check of the player name has a value
@@ -93,47 +106,56 @@ gameModule = function (exports) {
                 }
             }
         });
-
         //Check if o is the winner
-        var O_Player1 = exports.checkWinner(exports.player1);
-        //Check if x is the winner
-        var X_Player2 = exports.checkWinner(exports.player2);
-
-        if (O_Player1){
+        if(board_o >= 3 || board_x >= 3){
+           var playerWin =  exports.checkWinner(exports.player1,exports.player2);
+        }           
+        if (playerWin == 1){
             exports.win('one');
         }
-        if (X_Player2){
+        if (playerWin == 2){
             exports.win('two');
         }
-    };
+        if(board_x >= 4 && board_o >= 4 && playerWin != 1 && playerWin != 2){
+            exports.win('tie');
+        }     
 
-    exports.checkWinner = function (player) {
-        //Store all possible win pattern indexes on the board
-        var winPattern1 = [0 , 1 , 2]; //Horizontal Win Patterns
-        var winPattern2 = [3 , 4 , 5];
-        var winPattern3 = [6 , 7 , 8];
-        var winPattern4 = [0 , 3 , 6];  //Vertical Win Patterns
-        var winPattern5 = [1 , 4 , 7];
-        var winPattern6 = [2 , 5 , 8];
-        var winPattern7 = [0 , 4 , 8];  //Diagonal
-        var winPattern8 = [2 , 4 , 6];
-        var i = 0;
-        var j = 0;
-        var counter = 0;
-        var win;
+   };
 
-        $.each(player, function (index, value) {
-            if (winPattern1.indexOf(value) != -1){
-                counter ++;
-            }
+    exports.checkWinner = function (player1, player2) {
+        //Function to check the winner between player1 and 2 if 
+        //No one wins send the draw if player 1 or two wins send the 
+        //Playername and player ('one', 'two') 
+        var winner1;
+        var winner2;
+
+        $.each(exports.winPattern, function(index, array){
+            winner1 = array.length == player1.length && array.every(function(v,i) { 
+                                return ($.inArray(v,player1) != -1)});
+            winner2 = array.length == player2.length && array.every(function(v,i) { 
+                                return ($.inArray(v,player2) != -1)});
+            if(winner1){
+                return false;
+            };
+            if(winner2){
+                return false;
+            };
         });
-        win = player === winPattern6 || player === winPattern7 || player === winPattern8 ? true : false;
-        return win;
+        if(winner1){
+            return 1;
+        };
+        if(winner2){
+            return 2;
+        };
+
     };
-        // jQuery.inArray(player[j] ,exports.winPattern[i]) != -1)
-exports.changePlayer = function () {
+
+    //Function to Switch between players 
+    exports.changePlayer = function () {
         //Switch to the next player
         $(".players").each(function () {
+            //If this selected player isn't active set it to active and remove the 
+            //active class from the adjacent player and add class 'players-turn'
             if ( !$(this).hasClass("active") ) {
                 $(this).addClass("active").addClass("players-turn");
             } else {
@@ -143,6 +165,7 @@ exports.changePlayer = function () {
         });
     };
 
+    //Remove Active class from all players
     exports.removeActive = function () {
         //Remove active class from players x and o
         $(".players").each(function () {
@@ -152,6 +175,17 @@ exports.changePlayer = function () {
 
     exports.win = function (value) {
         var $windiv;
+        var player;
+        if (value === "one"){
+            player =  exports.playerName + ' WINS';
+        }
+        if (value === "two"){
+            player =  exports.computerName + ' WINS';
+        }
+        if (value === "tie"){
+            player = 'Its a Tie';
+        }
+
         $('#board').css("display" , "none");
         $windiv = $("<div>").attr({
             class: "screen screen-win screen-win-" + value ,
@@ -159,7 +193,7 @@ exports.changePlayer = function () {
         });
         var $header = $("<header>");
         $header.append("<h1>Tic Tac Toe</h1>");
-        $header.append('<p class="message">' + exports.playerName + ' WINS</p>');
+        $header.append('<p class="message">' + player + '</p>');
         $header.append('<a href="#" class="button" onclick= gameModule.restart()>New game</a>');
         $windiv.append($header);
         $("body").append($windiv);
@@ -231,9 +265,6 @@ $('.box').click(function(){
         }
     }
 });
-
-
-
 
 
 //When the user Presses the Back button restarts the game
