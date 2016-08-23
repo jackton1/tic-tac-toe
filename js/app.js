@@ -138,13 +138,13 @@ gameModule = function (exports) {
                             });
             winner2 = array.length == player2.length && array.every(function(v,i) { 
                                 return ($.inArray(v,player2) != -1)});
-            if(player1.length > 3){
+            if(player1.length > 4){
                 //Implement a check of 
                 winner1 = array.every(function(v,i) { 
                                 return ($.inArray(v,player1) != -1)
                         });
             }
-            if(player2.length > 3){
+            if(player2.length > 4){
                 winner2 = array.every(function(v,i) { 
                                 return ($.inArray(v,player2) != -1)
                             });
