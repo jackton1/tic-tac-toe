@@ -153,8 +153,7 @@ $(document).ready(function() {
         board.registerHumanHover($(this).children('i'));
     }, function() {
         board.clearHumanHover($(this).children('i'));
-    });
-    $('.space').click(function() {
+    }).click(function() {
         if (board.registerHumanClick($(this).children('i'))) {
             updateGame(board, reporter);
         }
