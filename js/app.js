@@ -4,29 +4,18 @@
  and the start.txt HTML snippet to guide you.
  */
 
-
 var gameModule;
 
-gameModule = (function (exports) {
+gameModule = function (exports) {
     exports = {
         //Store the player Name
-        playerName: "",
+        playerName: "" ,
         //Store the Name of the Computer Player
-        computerName: "Computer",
+        computerName: "Computer" ,
         //Store the loaction of the player 1
-        player1: [],
+        player1: [] ,
         //Store the location of the Player 2
-        player2: [],
-        //Store all possible win pattern indexes on the board
-        winPattern: [ [0,1,2],  //Horizontal Win Patterns
-                     [3,4,5],  
-                     [6,7,8],
-                     [0,3,6],  //Vertical Win Patterns
-                     [1,4,7],
-                     [2,5,8],
-                     [0,4,8],  //Diagonal
-                     [2,4,6]
-                    ]
+        player2: []
     };
 
     //Check of the player name has a value
@@ -50,7 +39,7 @@ gameModule = (function (exports) {
     //Function to load the start page on load of the document
     exports.load_start = function () {
         var $div;
-        //Hide the board 
+        //Hide the board
         $('#board').css("display" , "none");
         //Hide the finish page if navigating from finish to start
         $('#finish').css("display" , "none");
@@ -87,51 +76,64 @@ gameModule = (function (exports) {
     exports.play = function (selection) {
         var board_o = $('.box.box-filled-1').length;
         var board_x = $('.box.box-filled-2').length;
-         $(".box").each( function () {
-            console.log(this.index);
-             var indexOfPlayer = $(this).index();
-            //Get the index of both players selection 
-            if ($(this).hasClass(selection) && selection == 'box-filled-1'){
-                 //Check if the value exist in the array before pushing the value
-                if (jQuery.inArray(indexOfPlayer , exports.player1 ) == -1){
+        $(".box").each(function () {
+            var indexOfPlayer = $(this).index();
+            //Get the index of both players selection
+            if ( $(this).hasClass(selection) && selection == 'box-filled-1' ) {
+                //Check if the value exist in the array before pushing the value
+                if ( jQuery.inArray(indexOfPlayer , exports.player1) == -1 ) {
                     //If it doesn't exist push the value to the array
                     exports.player1.push(indexOfPlayer);
                 }
-            };
-            if ($(this).hasClass(selection) && selection == 'box-filled-2'){
+            }
+            if ( $(this).hasClass(selection) && selection == 'box-filled-2' ) {
 
-                if (jQuery.inArray(indexOfPlayer , exports.player2 ) == -1){
+                if ( jQuery.inArray(indexOfPlayer , exports.player2) == -1 ) {
                     exports.player2.push(indexOfPlayer);
                 }
-            };
-
+            }
         });
+
         //Check if o is the winner
-        if(board_o >= 3){
-              exports.checkWinner(exports.player1);
-        } 
+        var O_Player1 = exports.checkWinner(exports.player1);
         //Check if x is the winner
-        if(board_x >= 3){
-            exports.checkWinner(exports.player2);
-        }          
+        var X_Player2 = exports.checkWinner(exports.player2);
+
+        if (O_Player1){
+            exports.win('one');
+        }
+        if (X_Player2){
+            exports.win('two');
+        }
     };
 
-    exports.checkWinner = function(player){
-        var win = 0;
-        var value;
-        for(var i = 0; i < exports.winPattern.length;){
-                if(player === exports.winPattern[i]){
-                    win += 1;
-                    console.log(win + '' + player);
-                }
-            i++;
-         }
+    exports.checkWinner = function (player) {
+        //Store all possible win pattern indexes on the board
+        var winPattern1 = [0 , 1 , 2]; //Horizontal Win Patterns
+        var winPattern2 = [3 , 4 , 5];
+        var winPattern3 = [6 , 7 , 8];
+        var winPattern4 = [0 , 3 , 6];  //Vertical Win Patterns
+        var winPattern5 = [1 , 4 , 7];
+        var winPattern6 = [2 , 5 , 8];
+        var winPattern7 = [0 , 4 , 8];  //Diagonal
+        var winPattern8 = [2 , 4 , 6];
+        var i = 0;
+        var j = 0;
+        var counter = 0;
+        var win;
+
+        $.each(player, function (index, value) {
+            if (winPattern1.indexOf(value) != -1){
+                counter ++;
+            }
+        });
+        win = player === winPattern6 || player === winPattern7 || player === winPattern8 ? true : false;
+        return win;
     };
-
-
-    exports.changePlayer =  function () {
-      //Switch to the next player
-        $( ".players" ).each(function() {
+        // jQuery.inArray(player[j] ,exports.winPattern[i]) != -1)
+exports.changePlayer = function () {
+        //Switch to the next player
+        $(".players").each(function () {
             if ( !$(this).hasClass("active") ) {
                 $(this).addClass("active").addClass("players-turn");
             } else {
@@ -143,8 +145,8 @@ gameModule = (function (exports) {
 
     exports.removeActive = function () {
         //Remove active class from players x and o
-        $( ".players" ).each(function() {
-            $( this ).removeClass( "active" ).removeClass("players-turn");
+        $(".players").each(function () {
+            $(this).removeClass("active").removeClass("players-turn");
         });
     };
 
@@ -152,7 +154,7 @@ gameModule = (function (exports) {
         var $windiv;
         $('#board').css("display" , "none");
         $windiv = $("<div>").attr({
-            class: "screen screen-win screen-win-"+ value,
+            class: "screen screen-win screen-win-" + value ,
             id: "finish"
         });
         var $header = $("<header>");
@@ -164,16 +166,16 @@ gameModule = (function (exports) {
     };
 
     exports.restart = function () {
-            window.location.href = window.location.pathname;
+        window.location.href = window.location.pathname;
     };
 
-    return exports
+    return exports;
 
-}(gameModule || {}));
+}(gameModule || {});
 
 $(function(){
     //Load the Start page on load
-   gameModule.load_start();
+    gameModule.load_start();
     //Focus on the player name input
     $('#player-name').focus();
     //Play the game

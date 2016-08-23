@@ -149,7 +149,7 @@ $(document).ready(function() {
         board.startWith(o, x);
         updateGame(board, reporter);
     });
-    $(".space").hover(function() {
+    $('.space').hover(function() {
         board.registerHumanHover($(this).children('i'));
     }, function() {
         board.clearHumanHover($(this).children('i'));
