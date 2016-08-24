@@ -90,7 +90,7 @@ gameModule = function (exports) {
         var board_o = $('.box.box-filled-1').length;
         var board_x = $('.box.box-filled-2').length;
         var value = 0; 
-        for(var i = 0; i < 9; i++){ value += $('ul.boxes').children()[i].classList.length}
+        for(var i = 0; i < $('.box').length; i++){ value += $('ul.boxes').children()[i].classList.length}
         $(".box").each(function () {
             var indexOfPlayer = $(this).index();
             //Get the index of both players selection
@@ -134,20 +134,17 @@ gameModule = function (exports) {
 
         $.each(exports.winPattern, function(index, array){
             winner1 = array.length == player1.length && array.every(function(v,i) { 
-                                return ($.inArray(v,player1) != -1)
-                            });
+                                return ($.inArray(v,player1) != -1)});
             winner2 = array.length == player2.length && array.every(function(v,i) { 
                                 return ($.inArray(v,player2) != -1)});
-            if(player1.length > 4){
+            if(player1.length > 3){
                 //Implement a check of 
                 winner1 = array.every(function(v,i) { 
-                                return ($.inArray(v,player1) != -1)
-                        });
+                                return ($.inArray(v,player1) != -1)});
             }
-            if(player2.length > 4){
+            if(player2.length > 3){
                 winner2 = array.every(function(v,i) { 
-                                return ($.inArray(v,player2) != -1)
-                            });
+                                return ($.inArray(v,player2) != -1)});
             }
             if(winner1){
                 return false;
