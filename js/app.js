@@ -12,7 +12,7 @@ gameModule = function (exports) {
         playerName: "" ,
         //Store the Name of the Computer Player
         computerName: "Computer" ,
-        //Store the loaction of the player 1
+        //Store the location of the player 1
         player1: [] ,
         //Store the location of the Player 2
         player2: [] ,
@@ -89,9 +89,10 @@ gameModule = function (exports) {
     exports.play = function (selection) {
         var board_o = $('.box.box-filled-1').length;
         var board_x = $('.box.box-filled-2').length;
-        var value = 0; 
-        for(var i = 0; i < $('.box').length; i++){ value += $('ul.boxes').children()[i].classList.length}
-        $(".box").each(function () {
+        var value = 0;
+        var $box = $('.box');
+        for(var i = 0; i < $box.length; i++){ value += $('ul.boxes').children()[i].classList.length}
+        $box.each(function () {
             var indexOfPlayer = $(this).index();
             //Get the index of both players selection
             if ( $(this).hasClass(selection) && selection == 'box-filled-1' ) {
@@ -148,17 +149,17 @@ gameModule = function (exports) {
             }
             if(winner1){
                 return false;
-            };
+            }
             if(winner2){
                 return false;
-            };
+            }
         });
         if(winner1){
             return 1;
-        };
+        }
         if(winner2){
             return 2;
-        };
+        }
 
     };
 
@@ -217,7 +218,7 @@ gameModule = function (exports) {
 
     return exports;
 
-}(gameModule || {});
+}({} || gameModule);
 
 $(function(){
     //Load the Start page on load
