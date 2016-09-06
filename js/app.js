@@ -230,13 +230,13 @@ $(function(){
 
 });
 
-//
+//Removed Selection of player x or o
 //Event to each player selected
-$('.players').on("click", function(){
-   gameModule.removeActive();
+//$('.players').on("click", function(){
+  // gameModule.removeActive();
     //Add an active class to the current selected player
-  $(this).addClass("active").addClass("players-turn");
-});
+  //$(this).addClass("active").addClass("players-turn");
+//});
 
 //Store the classes of both x and o
 //When the user selects x or o and clicks the boxes
